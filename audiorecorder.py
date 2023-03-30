@@ -36,11 +36,18 @@ def get_device_info(device):
     else:
         sys.exit("Device is index out of range")
 
+def get_filename():
+    filename = input(f"\nFile name: ")
+
+    return filename
+
 def main():
     try:
         get_available_devices()
         device_number = get_input_device()
         get_device_info(device_number)
+        filename = get_filename()
+        print(filename)
     except Exception as e:
         sys.exit(f"\nOpss, Something went wrong:", str(e))
 
