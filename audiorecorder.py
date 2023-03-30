@@ -4,6 +4,9 @@ import sounddevice as sd
 import soundfile as sf
 from queue import Queue
 
+SAMPLE_RATE = 24000
+OUTPUT_FOLDER = os.path.join("sound")
+
 def get_available_devices():
     print(f"\nAvailable devices:")
     print(sd.query_devices())
