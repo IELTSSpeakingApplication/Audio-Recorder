@@ -44,13 +44,33 @@ def get_filename():
 
     return filename
 
+def get_ready(device, filename):
+    filename = filename+".wav"
+
+    print(f"\nDevice name is", device["name"])
+    print("Device channels is", device["max_input_channels"])
+    print("Sample Rate is", str(SAMPLE_RATE))
+    print("File Name is", filename)
+    print("File Path is", os.path.join(OUTPUT_FOLDER, filename))
+
+    print(f"\n=======================")
+    print(f"Get ready for recording")
+    print(f"=======================\n")
+
+    confirmation = input("Type (Y/y) if you ready: ")
+
+    if confirmation=="y" or confirmation=="Y":
+        print("recording...")
+    else:
+        sys.exit("Opps, process aborted")
+
 def main():
     try:
         get_available_devices()
         device_number = get_input_device()
-        get_device_info(device_number)
+        device = get_device_info(device_number)
         filename = get_filename()
-        print(filename)
+        get_ready(device, filename)
     except Exception as e:
         sys.exit(f"\nOpss, Something went wrong:", str(e))
 
