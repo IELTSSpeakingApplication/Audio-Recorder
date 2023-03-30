@@ -7,6 +7,8 @@ from queue import Queue
 SAMPLE_RATE = 24000
 OUTPUT_FOLDER = os.path.join("sound")
 
+q = Queue()
+
 def get_available_devices():
     print(f"\nAvailable devices:")
     print(sd.query_devices())
@@ -60,9 +62,31 @@ def get_ready(device, filename):
     confirmation = input("Type (Y/y) if you ready: ")
 
     if confirmation=="y" or confirmation=="Y":
-        print("recording...")
+        recording(device, filename)
     else:
         sys.exit("Opps, process aborted")
+
+def callback(indata, frames, time, status):
+    if status:
+        print(f"\nRecording...\n", flush=True)
+    q.put(indata.copy())
+
+def recording(device, filename):
+    try:
+        with sf.SoundFile(os.path.join(OUTPUT_FOLDER, filename), mode='x', samplerate=SAMPLE_RATE,
+                        channels=device["max_input_channels"], subtype="PCM_16") as file:
+            with sd.InputStream(samplerate=SAMPLE_RATE, device=device["name"],
+                                channels=device["max_input_channels"], callback=callback):
+                print('*' * 80)
+                print(f"\nGet ready for recording...")
+                print(f"Control + C for stop recording\n")
+                print('*' * 80)
+                while True:
+                    file.write(q.get())
+    except KeyboardInterrupt:
+        sys.exit(f"\nYes, Recording finished")
+    except Exception as e:
+        sys.exit(f"\nOpss, Something went wrong:", str(e))
 
 def main():
     try:
