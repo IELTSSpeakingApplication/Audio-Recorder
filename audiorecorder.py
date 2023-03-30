@@ -19,11 +19,28 @@ def get_input_device():
     
     return device
 
+def get_device_info(device):
+    device_info = sd.query_devices()
+
+    if device < len(device_info):
+        print(f"\nDevice information:")
+
+        device =  device_info[int(device)]
+        device_name = device["name"]
+        device_channels = device["max_input_channels"]
+
+        print("Device name:", device_name)
+        print("Device input channels:", device_channels, "(Mono)" if device_channels==1 else "(Stereo)")
+
+        return device
+    else:
+        sys.exit("Device is index out of range")
+
 def main():
     try:
         get_available_devices()
         device_number = get_input_device()
-        print(device_number)
+        get_device_info(device_number)
     except Exception as e:
         sys.exit(f"\nOpss, Something went wrong:", str(e))
 
