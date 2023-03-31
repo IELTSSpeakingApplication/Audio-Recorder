@@ -27,7 +27,7 @@ def get_input_device():
 def get_device_info(num_device):
     device_info = sd.query_devices()
 
-    if device < len(device_info):
+    if num_device < len(device_info):
         print(f"\nDevice information:")
 
         device =  device_info[int(num_device)]
