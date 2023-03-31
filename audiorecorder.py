@@ -20,7 +20,7 @@ def get_input_device():
     try:
         num_device = int(input(f"\nDevice number: "))
     except ValueError:
-        sys.exit("Input device must be integer (1/2/3/..)")
+        sys.exit(f"Input device must be integer (1/2/3/..)")
     
     return num_device
 
@@ -35,15 +35,18 @@ def get_device_info(num_device):
         device_channels = device["max_input_channels"]
         default_samplerate = device["default_samplerate"]
 
-        print("Device name:", device_name)
-        print("Device input channels:", device_channels, "(Mono)" if device_channels==1 else "(Stereo)")
-        print("Device Sample Rate:", default_samplerate)
+        print(f"Device name:", device_name)
+        print(f"Device input channels:", device_channels, "(Mono)" if device_channels==1 else "(Stereo)")
+        print(f"Device Sample Rate:", default_samplerate)
 
         return device
     else:
-        sys.exit("Device is index out of range")
+        sys.exit(f"Device is index out of range")
 
 def get_filename():
+    print(f"\n* Filename format is name-date (hafid-100423)")
+    print(f"* File will be save in sound folder")
+
     filename = input(f"\nFile name: ")
 
     return filename
@@ -52,21 +55,21 @@ def get_ready(device, filename):
     filename = filename+".wav"
 
     print(f"\nDevice name is", device["name"])
-    print("Device channels is", device["max_input_channels"])
-    print("Sample Rate is", str(SAMPLE_RATE))
-    print("File Name is", filename)
-    print("File Path is", os.path.join(OUTPUT_FOLDER, filename))
+    print(f"Device channels is", device["max_input_channels"])
+    print(f"Sample Rate is", str(SAMPLE_RATE))
+    print(f"File Name is", filename)
+    print(f"File Path is", os.path.join(OUTPUT_FOLDER, filename))
 
     print(f"\n=======================")
     print(f"Get ready for recording")
     print(f"=======================\n")
 
-    confirmation = input("Type (Y/y) if you ready: ")
+    confirmation = input(f"Type (Y/y) if you ready: ")
 
     if confirmation=="y" or confirmation=="Y":
         recording(device, filename)
     else:
-        sys.exit("Opps, process aborted")
+        sys.exit(f"Opps, recording process aborted")
 
 def callback(indata, frames, time, status):
     if status:
@@ -79,10 +82,10 @@ def recording(device, filename):
                         channels=device["max_input_channels"], subtype="PCM_16") as file:
             with sd.InputStream(samplerate=SAMPLE_RATE, device=device["name"],
                                 channels=device["max_input_channels"], callback=callback):
-                print("*" * 50)
+                print(f"*" * 50)
                 print(f"\nGet ready for recording...")
                 print(f"Control + C for stop recording\n")
-                print("*" * 50)
+                print(f"*" * 50)
                 while True:
                     file.write(q.get())
     except KeyboardInterrupt:
