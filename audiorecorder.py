@@ -18,24 +18,26 @@ def get_input_device():
     print(f"* Default microphone (>)")
 
     try:
-        device = int(input(f"\nDevice number: "))
+        num_device = int(input(f"\nDevice number: "))
     except ValueError:
         sys.exit("Input device must be integer (1/2/3/..)")
     
-    return device
+    return num_device
 
-def get_device_info(device):
+def get_device_info(num_device):
     device_info = sd.query_devices()
 
     if device < len(device_info):
         print(f"\nDevice information:")
 
-        device =  device_info[int(device)]
+        device =  device_info[int(num_device)]
         device_name = device["name"]
         device_channels = device["max_input_channels"]
+        default_samplerate = device["default_samplerate"]
 
         print("Device name:", device_name)
         print("Device input channels:", device_channels, "(Mono)" if device_channels==1 else "(Stereo)")
+        print("Device Sample Rate:", default_samplerate)
 
         return device
     else:
@@ -73,14 +75,14 @@ def callback(indata, frames, time, status):
 
 def recording(device, filename):
     try:
-        with sf.SoundFile(os.path.join(OUTPUT_FOLDER, filename), mode='x', samplerate=SAMPLE_RATE,
+        with sf.SoundFile(os.path.join(OUTPUT_FOLDER, filename), mode="x", samplerate=SAMPLE_RATE,
                         channels=device["max_input_channels"], subtype="PCM_16") as file:
             with sd.InputStream(samplerate=SAMPLE_RATE, device=device["name"],
                                 channels=device["max_input_channels"], callback=callback):
-                print('*' * 80)
+                print("*" * 50)
                 print(f"\nGet ready for recording...")
                 print(f"Control + C for stop recording\n")
-                print('*' * 80)
+                print("*" * 50)
                 while True:
                     file.write(q.get())
     except KeyboardInterrupt:
